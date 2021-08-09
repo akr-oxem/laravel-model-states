@@ -55,6 +55,11 @@ trait HasStates
 
         $unserializeState = function (StateConfig $stateConfig) {
             return function (Model $model) use ($stateConfig) {
+                // bugfix for loadCount() https://github.com/spatie/laravel-model-states/discussions/179
+                if (! array_key_exists($stateConfig->field, $model->getAttributes())) {
+                    return;
+                }
+
                 $stateClass = $stateConfig->stateClass::resolveStateClass($model->getAttribute($stateConfig->field));
 
                 $defaultState = $stateConfig->defaultStateClass
